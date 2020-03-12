@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<form action="https://localhost:8888/chat.ejs">
+<head>
+
+    <title>EJS Socket.IO chat</title>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.slim.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script type="text/javascript">
+        var socket = io('https://localhost:3000'); //내 ip주소를 컨택해주면 되는 곳
+        var room = 'Socket Room';
+        var isInitiator = false;
+
+        if (room !== '') {
+            socket.emit('create or join', room);
+            console.log('Attempted to create or  join room', room);
+        }
+        socket.on('created', function(room) {
+            console.log('Created room ' + room);
+            isInitiator = true;
+        });
+
+        socket.on('chatMessage', function (msg) {
+            $('#messages').append($('<li>').text(msg));
+        });
+
+        $('form').submit(function () {
+            socket.emit('chatMessage', $('#m').val());
+            $('#m').val('');
+            return false;
+        });
+        </script>
+
+        <style> * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        form { background: #eeeeee00; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+    </style>
+</head>
+<body>
+<ul id="messages">
+
+</ul>
+    <input id="m" autocomplete="off" />
+    <button>Send</button>
+</body>
+</form>
+</html>
+
